@@ -1,23 +1,17 @@
 import { createRouter, createWebHistory } from "@ionic/vue-router"
 import type { RouteRecordRaw } from "vue-router"
-import BusinessDashboard from "../views/BusinessDashboard.vue"
-import TechnicalDashboard from "../views/TechnicalDashboard.vue"
+import SwaplyDashboard from "../views/SwaplyDashboard.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "/business",
+    redirect: "/swaply",
   },
   {
-    path: "/business",
-    name: "Business",
-    component: BusinessDashboard,
-  },
-  {
-    path: "/technical",
-    name: "Technical",
-    component: TechnicalDashboard,
-  },
+    path: "/swaply",
+    name: "swaply",
+    component: SwaplyDashboard,
+  }
 ]
 
 const router = createRouter({

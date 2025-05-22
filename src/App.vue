@@ -1,66 +1,18 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main-content" when="md">
-      <ion-menu content-id="main-content" type="overlay" class="narrow-menu">
-        <ion-content>
-          <ion-list id="inbox-list">
-            <ion-list-header>SWAPLY Dashboard</ion-list-header>
-
-            <ion-menu-toggle auto-hide="false" v-for="(p, i) in appPages" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
-                <ion-icon slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
-                <ion-label>{{ p.title }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
-          </ion-list>
-        </ion-content>
-      </ion-menu>
-      <ion-router-outlet id="main-content"></ion-router-outlet>
-    </ion-split-pane>
+    <ion-router-outlet></ion-router-outlet>
   </ion-app>
 </template>
 
 <script lang="ts">
-import { IonApp, IonContent, IonIcon, IonItem, IonLabel, IonList, IonListHeader, IonMenu, IonMenuToggle, IonRouterOutlet, IonSplitPane } from '@ionic/vue';
-import { defineComponent, ref } from 'vue';
-import { businessOutline, businessSharp, cogOutline, cogSharp } from 'ionicons/icons';
+import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    IonApp, 
-    IonContent, 
-    IonIcon, 
-    IonItem, 
-    IonLabel, 
-    IonList, 
-    IonListHeader, 
-    IonMenu, 
-    IonMenuToggle, 
-    IonRouterOutlet, 
-    IonSplitPane
-  },
-  setup() {
-    const selectedIndex = ref(0);
-    const appPages = [
-      {
-        title: 'Business Dashboard',
-        url: '/business',
-        iosIcon: businessOutline,
-        mdIcon: businessSharp
-      },
-      {
-        title: 'Technical Dashboard',
-        url: '/technical',
-        iosIcon: cogOutline,
-        mdIcon: cogSharp
-      }
-    ];
-    
-    return {
-      selectedIndex,
-      appPages
-    }
+    IonApp,
+    IonRouterOutlet
   }
 });
 </script>
