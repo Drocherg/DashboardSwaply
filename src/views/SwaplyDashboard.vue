@@ -68,8 +68,8 @@
             </div>
           </div>
           
-          <!-- 3. ECharts - Pie Chart -->
-          <div class="chart-card">
+          <!-- 3. ECharts - Treemap (Ocupa 2 filas) -->
+          <div class="chart-card chart-card-tall">
             <div class="chart-header">
               <h2>Distribución de Usuarios</h2>
             </div>
@@ -144,8 +144,8 @@
             </div>
           </div>
           
-          <!-- 3. ECharts - Donut Chart -->
-          <div class="chart-card">
+          <!-- 3. ECharts - Treemap (Ocupa 2 filas) -->
+          <div class="chart-card chart-card-tall">
             <div class="chart-header">
               <h2>Tipos de Errores</h2>
             </div>
@@ -250,12 +250,9 @@ export default defineComponent({
     let errorTypesChartInstance: echarts.ECharts | null = null;
     let dbPerformanceChartInstance: Chart | null = null;
     
-    // Update intervals
-    let businessUpdateInterval: number | null = null;
-    let technicalUpdateInterval: number | null = null;
+    // Update intervals - Solo para gráficos en tiempo real
     let userActivityInterval: number | null = null;
     let dbPerformanceInterval: number | null = null;
-    let memoryGaugeInterval: number | null = null;
     
     // Current memory usage for gauge
     let currentMemoryUsage = 65;
@@ -264,33 +261,33 @@ export default defineComponent({
     const businessStats = ref([
       {
         icon: cashOutline,
-        value: '€0',
+        value: '€57.007',
         label: 'Ingresos Totales',
-        trend: '0%',
+        trend: '25.5%',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       },
       {
         icon: peopleOutline,
-        value: '0',
+        value: '4.734',
         label: 'Suscripciones',
-        trend: '0%',
+        trend: '108.9%',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       },
       {
         icon: cartOutline,
-        value: '0',
+        value: '21.720',
         label: 'Ventas',
-        trend: '0%',
+        trend: '15.8%',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       },
       {
         icon: starOutline,
-        value: '0',
+        value: '4.7',
         label: 'Valoración Media',
-        trend: '0',
+        trend: '+0.4',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       }
@@ -300,191 +297,50 @@ export default defineComponent({
     const technicalStats = ref([
       {
         icon: speedometerOutline,
-        value: '0%',
+        value: '99.8%',
         label: 'Uptime',
-        trend: '0%',
+        trend: '+0.3%',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       },
       {
         icon: timeOutline,
-        value: '0ms',
+        value: '187ms',
         label: 'Tiempo de Respuesta',
-        trend: '0ms',
+        trend: '-12ms',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       },
       {
         icon: alertCircleOutline,
-        value: '0%',
+        value: '0.05%',
         label: 'Tasa de Error',
-        trend: '0%',
+        trend: '-0.02%',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       },
       {
         icon: cloudUploadOutline,
-        value: '0',
+        value: '14',
         label: 'Despliegues',
-        trend: '0',
+        trend: '+3',
         trendIcon: arrowUpOutline,
         trendClass: 'positive'
       }
     ]);
     
-    // Generate random business data
-    const generateBusinessData = () => {
-      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      const userTypes = ['Nuevos', 'Recurrentes', 'Premium', 'Gratuitos'];
-      
-      // Generate sales data
-      const salesData = months.map(() => Math.floor(Math.random() * 1000) + 200);
-      
-      // Update charts
-      if (salesChartInstance) {
-        salesChartInstance.data.datasets[0].data = salesData;
-        salesChartInstance.update();
-      }
-      
-      if (annualGrowthChartInstance) {
-        annualGrowthChartInstance.updateSeries([{
-          name: 'Crecimiento',
-          data: months.map(() => Math.floor(Math.random() * 30) + 5)
-        }]);
-      }
-      
-      if (userDistributionChartInstance) {
-        userDistributionChartInstance.setOption({
-          series: [{
-            data: [
-              { value: Math.floor(Math.random() * 500) + 100, name: 'Nuevos' },
-              { value: Math.floor(Math.random() * 500) + 100, name: 'Recurrentes' },
-              { value: Math.floor(Math.random() * 500) + 100, name: 'Premium' },
-              { value: Math.floor(Math.random() * 500) + 100, name: 'Gratuitos' }
-            ]
-          }]
-        });
-      }
-      
-      // Update sales goals chart
-      if (salesGoalsChartInstance) {
-        const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-        const targets = [1000000, 1200000, 1500000, 2000000];
-        const currents = quarters.map((_, i) => Math.floor(Math.random() * (targets[i] * 1.2)));
-        
-        salesGoalsChartInstance.updateSeries([
-          {
-            name: 'Actual',
-            data: currents
-          },
-          {
-            name: 'Objetivo',
-            data: targets
-          }
-        ]);
-      }
-      
-      // Update stats
-      const totalRevenue = Math.floor(Math.random() * 100000) + 10000;
-      const subscriptions = Math.floor(Math.random() * 5000) + 1000;
-      const sales = Math.floor(Math.random() * 20000) + 5000;
-      const rating = (Math.random() * 1 + 4).toFixed(1);
-      
-      const revenueGrowth = (Math.random() * 30 + 5).toFixed(1);
-      const subscriptionGrowth = (Math.random() * 200 + 50).toFixed(1);
-      const salesGrowth = (Math.random() * 30 + 5).toFixed(1);
-      const ratingChange = (Math.random() * 0.5).toFixed(1);
-      
-      businessStats.value[0].value = formatCurrency(totalRevenue);
-      businessStats.value[0].trend = `${revenueGrowth}%`;
-      businessStats.value[0].trendClass = parseFloat(revenueGrowth) > 0 ? 'positive' : 'negative';
-      businessStats.value[0].trendIcon = parseFloat(revenueGrowth) > 0 ? arrowUpOutline : arrowDownOutline;
-      
-      businessStats.value[1].value = formatNumber(subscriptions);
-      businessStats.value[1].trend = `${subscriptionGrowth}%`;
-      businessStats.value[1].trendClass = parseFloat(subscriptionGrowth) > 0 ? 'positive' : 'negative';
-      businessStats.value[1].trendIcon = parseFloat(subscriptionGrowth) > 0 ? arrowUpOutline : arrowDownOutline;
-      
-      businessStats.value[2].value = formatNumber(sales);
-      businessStats.value[2].trend = `${salesGrowth}%`;
-      businessStats.value[2].trendClass = parseFloat(salesGrowth) > 0 ? 'positive' : 'negative';
-      businessStats.value[2].trendIcon = parseFloat(salesGrowth) > 0 ? arrowUpOutline : arrowDownOutline;
-      
-      businessStats.value[3].value = rating;
-      businessStats.value[3].trend = `+${ratingChange}`;
-      businessStats.value[3].trendClass = parseFloat(ratingChange) > 0 ? 'positive' : 'negative';
-      businessStats.value[3].trendIcon = parseFloat(ratingChange) > 0 ? arrowUpOutline : arrowDownOutline;
+    // Format functions
+    const formatCurrency = (value: number): string => {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value);
     };
     
-    // Generate random technical data
-    const generateTechnicalData = () => {
-      // Update server load chart
-      if (serverLoadChartInstance) {
-        const cpuData = Array.from({ length: 24 }, () => Math.floor(Math.random() * 30) + 40);
-        const memoryData = Array.from({ length: 24 }, () => Math.floor(Math.random() * 30) + 50);
-        
-        serverLoadChartInstance.data.datasets[0].data = cpuData;
-        serverLoadChartInstance.data.datasets[1].data = memoryData;
-        serverLoadChartInstance.update();
-      }
-      
-      // Update API response chart
-      if (apiResponseChartInstance) {
-        apiResponseChartInstance.updateSeries([{
-          name: 'Tiempo de Respuesta (ms)',
-          data: [
-            Math.floor(Math.random() * 200) + 100,
-            Math.floor(Math.random() * 200) + 100,
-            Math.floor(Math.random() * 200) + 100,
-            Math.floor(Math.random() * 200) + 100,
-            Math.floor(Math.random() * 200) + 100,
-            Math.floor(Math.random() * 200) + 100,
-            Math.floor(Math.random() * 200) + 100
-          ]
-        }]);
-      }
-      
-      // Update error types chart
-      if (errorTypesChartInstance) {
-        errorTypesChartInstance.setOption({
-          series: [{
-            data: [
-              { value: Math.floor(Math.random() * 30) + 10, name: 'Red' },
-              { value: Math.floor(Math.random() * 30) + 10, name: 'Autenticación' },
-              { value: Math.floor(Math.random() * 30) + 10, name: 'Validación' },
-              { value: Math.floor(Math.random() * 30) + 10, name: 'Base de Datos' },
-              { value: Math.floor(Math.random() * 30) + 10, name: 'Servidor' }
-            ]
-          }]
-        });
-      }
-      
-      // Update stats
-      const uptime = (99 + Math.random()).toFixed(1);
-      const responseTime = Math.floor(Math.random() * 100) + 150;
-      const errorRate = (Math.random() * 0.1).toFixed(2);
-      const deployments = Math.floor(Math.random() * 20);
-      
-      const uptimeChange = (Math.random() * 0.5).toFixed(1);
-      const responseTimeChange = Math.floor(Math.random() * 20);
-      const errorRateChange = (Math.random() * 0.05).toFixed(2);
-      const deploymentsChange = Math.floor(Math.random() * 5);
-      
-      technicalStats.value[0].value = `${uptime}%`;
-      technicalStats.value[0].trend = `+${uptimeChange}%`;
-      technicalStats.value[0].trendClass = 'positive';
-      
-      technicalStats.value[1].value = `${responseTime}ms`;
-      technicalStats.value[1].trend = `-${responseTimeChange}ms`;
-      technicalStats.value[1].trendClass = 'positive';
-      
-      technicalStats.value[2].value = `${errorRate}%`;
-      technicalStats.value[2].trend = `-${errorRateChange}%`;
-      technicalStats.value[2].trendClass = 'positive';
-      
-      technicalStats.value[3].value = `${deployments}`;
-      technicalStats.value[3].trend = `+${deploymentsChange}`;
-      technicalStats.value[3].trendClass = 'positive';
+    const formatNumber = (value: number): string => {
+      return new Intl.NumberFormat('es-ES').format(value);
     };
     
     // Update user activity chart (real-time)
@@ -518,10 +374,6 @@ export default defineComponent({
     const updateMemoryGauge = () => {
       if (!memoryUsageChart.value) return;
       
-      // Random fluctuation between -5 and +5
-      const fluctuation = Math.floor(Math.random() * 11) - 5;
-      currentMemoryUsage = Math.max(0, Math.min(100, currentMemoryUsage + fluctuation));
-      
       const gaugeElement = memoryUsageChart.value;
       const gaugeFill = gaugeElement.querySelector('.gauge-fill') as HTMLElement;
       const gaugeText = gaugeElement.querySelector('.gauge-text') as HTMLElement;
@@ -545,20 +397,6 @@ export default defineComponent({
       }
     };
     
-    // Format functions
-    const formatCurrency = (value: number): string => {
-      return new Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(value);
-    };
-    
-    const formatNumber = (value: number): string => {
-      return new Intl.NumberFormat('es-ES').format(value);
-    };
-    
     // Initialize business charts
     const initBusinessCharts = () => {
       const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -571,7 +409,7 @@ export default defineComponent({
             labels: months,
             datasets: [{
               label: 'Ventas',
-              data: months.map(() => Math.floor(Math.random() * 1000) + 200),
+              data: [1150, 1100, 350, 400, 950, 800, 420, 220, 1080, 980, 850, 350],
               backgroundColor: '#5b6bf9',
               borderColor: '#5b6bf9',
               borderWidth: 1
@@ -584,25 +422,25 @@ export default defineComponent({
               legend: {
                 position: 'top',
                 labels: {
-                  color: '#333333' // Color más oscuro para las etiquetas
+                  color: '#333333'
                 }
               }
             },
             scales: {
               x: {
                 ticks: {
-                  color: '#333333' // Color más oscuro para las etiquetas del eje X
+                  color: '#333333'
                 },
                 grid: {
-                  color: '#dddddd' // Color más oscuro para las líneas de la cuadrícula
+                  color: '#dddddd'
                 }
               },
               y: {
                 ticks: {
-                  color: '#333333' // Color más oscuro para las etiquetas del eje Y
+                  color: '#333333'
                 },
                 grid: {
-                  color: '#dddddd' // Color más oscuro para las líneas de la cuadrícula
+                  color: '#dddddd'
                 }
               }
             }
@@ -615,7 +453,7 @@ export default defineComponent({
         annualGrowthChartInstance = new ApexCharts(annualGrowthChart.value, {
           series: [{
             name: 'Crecimiento',
-            data: months.map(() => Math.floor(Math.random() * 30) + 5)
+            data: [15, 6, 25, 14, 18, 17, 12, 11, 24, 15, 30, 25]
           }],
           chart: {
             type: 'area',
@@ -623,7 +461,7 @@ export default defineComponent({
             toolbar: {
               show: false
             },
-            foreColor: '#333333' // Color más oscuro para el texto
+            foreColor: '#333333'
           },
           dataLabels: {
             enabled: false
@@ -646,7 +484,7 @@ export default defineComponent({
             categories: months,
             labels: {
               style: {
-                colors: '#333333' // Color más oscuro para las etiquetas del eje X
+                colors: '#333333'
               }
             }
           },
@@ -654,21 +492,21 @@ export default defineComponent({
             title: {
               text: 'Porcentaje (%)',
               style: {
-                color: '#333333' // Color más oscuro para el título del eje Y
+                color: '#333333'
               }
             },
             labels: {
               style: {
-                colors: '#333333' // Color más oscuro para las etiquetas del eje Y
+                colors: '#333333'
               }
             }
           },
           grid: {
-            borderColor: '#dddddd' // Color más oscuro para los bordes de la cuadrícula
+            borderColor: '#dddddd'
           },
           legend: {
             labels: {
-              colors: '#333333' // Color más oscuro para las etiquetas de la leyenda
+              colors: '#333333'
             }
           }
         });
@@ -676,71 +514,83 @@ export default defineComponent({
         annualGrowthChartInstance.render();
       }
       
-      // 3. ECharts - Donut Chart (User Distribution)
+      // 3. ECharts - Treemap (User Distribution)
       if (userDistributionChart.value && !userDistributionChartInstance) {
-        // Asegurarse de que el contenedor tenga dimensiones
-        userDistributionChart.value.style.width = '100%';
-        userDistributionChart.value.style.height = '100%';
+        userDistributionChart.value.style.width = '720%';
+        userDistributionChart.value.style.height = '980%';
         
-        // Inicializar ECharts después de asegurar que el DOM está listo
         nextTick(() => {
           userDistributionChartInstance = echarts.init(userDistributionChart.value);
           
+          const userData = [
+            { name: 'Nuevos', value: 335 },
+            { name: 'Recurrentes', value: 310 },
+            { name: 'Premium', value: 234 },
+            { name: 'Gratuitos', value: 135 }
+          ];
+          
+          const totalUsers = userData.reduce((sum, item) => sum + item.value, 0);
+          
           userDistributionChartInstance.setOption({
             tooltip: {
-              trigger: 'item',
-              formatter: '{a} <br/>{b}: {c} ({d}%)',
-              textStyle: {
-                color: '#333333' // Color más oscuro para el texto del tooltip
+              formatter: function(info: any) {
+                const value = info.value;
+                const percentage = ((value / totalUsers) * 100).toFixed(1);
+                return `<div style="font-weight:bold;margin-bottom:5px;">${info.name}</div>` +
+                       `<div>Usuarios: ${value}</div>` +
+                       `<div>Porcentaje: ${percentage}%</div>`;
               }
             },
-            legend: {
-              orient: 'vertical',
-              right: 10,
-              top: 'center',
-              data: ['Nuevos', 'Recurrentes', 'Premium', 'Gratuitos'],
-              textStyle: {
-                color: '#333333' // Color más oscuro para el texto de la leyenda
-              }
-            },
-            color: ['#5b6bf9', '#4a9ff5', '#4ad9f5', '#b14cfa'],
-            series: [
-              {
-                name: 'Usuarios',
-                type: 'pie',
-                radius: ['50%', '70%'], // Cambiado a donut como Tipos de Errores
-                center: ['40%', '50%'], // Centrado para dejar espacio a la leyenda
-                avoidLabelOverlap: false,
-                itemStyle: {
-                  borderRadius: 10,
-                  borderColor: '#fff',
-                  borderWidth: 2
-                },
-                label: {
-                  show: false
-                },
-                emphasis: {
+            series: [{
+              type: 'treemap',
+              data: userData.map(item => {
+                const percentage = ((item.value / totalUsers) * 100).toFixed(1);
+                return {
+                  name: item.name,
+                  value: item.value,
                   label: {
-                    show: true,
-                    fontSize: '18',
-                    fontWeight: 'bold',
-                    color: '#333333' // Color más oscuro para las etiquetas enfatizadas
+                    formatter: `{b}\n{c} (${percentage}%)`,
+                    fontSize: 14
                   }
-                },
-                labelLine: {
-                  show: false
-                },
-                data: [
-                  { value: 335, name: 'Nuevos' },
-                  { value: 310, name: 'Recurrentes' },
-                  { value: 234, name: 'Premium' },
-                  { value: 135, name: 'Gratuitos' }
-                ]
+                };
+              }),
+              breadcrumb: { show: false },
+              itemStyle: {
+                borderColor: '#fff',
+                borderWidth: 1,
+                gapWidth: 1
+              },
+              label: {
+                show: true,
+                formatter: '{b}\n{c} ({d}%)',
+                position: 'inside',
+                fontSize: 14,
+                color: '#fff'
+              },
+              upperLabel: {
+                show: false
+              },
+              levels: [
+                {
+                  itemStyle: {
+                    borderColor: '#fff',
+                    borderWidth: 2,
+                    gapWidth: 2
+                  }
+                }
+              ],
+              colorRange: {
+                color: ['#5b6bf9', '#4a9ff5', '#4ad9f5', '#b14cfa']
+              },
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
               }
-            ]
+            }]
           });
           
-          // Asegurarse de que el gráfico se redimensione cuando cambie el tamaño de la ventana
           window.addEventListener('resize', () => {
             userDistributionChartInstance?.resize();
           });
@@ -751,7 +601,7 @@ export default defineComponent({
       if (salesGoalsChart.value && !salesGoalsChartInstance) {
         const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
         const targets = [1000000, 1200000, 1500000, 2000000];
-        const currents = quarters.map((_, i) => Math.floor(Math.random() * (targets[i] * 1.2)));
+        const currents = [480000, 520000, 1650000, 1500000];
         
         salesGoalsChartInstance = new ApexCharts(salesGoalsChart.value, {
           series: [
@@ -771,7 +621,7 @@ export default defineComponent({
               show: false
             },
             stacked: false,
-            foreColor: '#333333' // Color más oscuro para el texto
+            foreColor: '#333333'
           },
           plotOptions: {
             bar: {
@@ -796,7 +646,7 @@ export default defineComponent({
             categories: quarters,
             labels: {
               style: {
-                colors: '#333333' // Color más oscuro para las etiquetas del eje X
+                colors: '#333333'
               }
             }
           },
@@ -804,7 +654,7 @@ export default defineComponent({
             title: {
               text: 'EUR',
               style: {
-                color: '#333333' // Color más oscuro para el título del eje Y
+                color: '#333333'
               }
             },
             labels: {
@@ -812,7 +662,7 @@ export default defineComponent({
                 return formatCurrency(val);
               },
               style: {
-                colors: '#333333' // Color más oscuro para las etiquetas del eje Y
+                colors: '#333333'
               }
             }
           },
@@ -834,11 +684,11 @@ export default defineComponent({
           legend: {
             position: 'top',
             labels: {
-              colors: '#333333' // Color más oscuro para las etiquetas de la leyenda
+              colors: '#333333'
             }
           },
           grid: {
-            borderColor: '#dddddd' // Color más oscuro para los bordes de la cuadrícula
+            borderColor: '#dddddd'
           }
         });
         
@@ -847,7 +697,7 @@ export default defineComponent({
       
       // 5. Real-time Chart - Line Chart (User Activity)
       if (userActivityChart.value && !userActivityChartInstance) {
-        const initialData = Array.from({ length: 30 }, () => Math.floor(Math.random() * 100) + 50);
+        const initialData = [120, 132, 101, 134, 90, 130, 110, 120, 132, 101, 134, 90, 130, 110, 120, 132, 101, 134, 90, 130, 110, 120, 132, 101, 134, 90, 130, 110, 120, 132];
         
         userActivityChartInstance = new Chart(userActivityChart.value, {
           type: 'line',
@@ -876,10 +726,10 @@ export default defineComponent({
                 min: 0,
                 max: 200,
                 ticks: {
-                  color: '#333333' // Color más oscuro para las etiquetas del eje Y
+                  color: '#333333'
                 },
                 grid: {
-                  color: '#dddddd' // Color más oscuro para las líneas de la cuadrícula
+                  color: '#dddddd'
                 }
               },
               x: {
@@ -892,18 +742,9 @@ export default defineComponent({
           }
         });
         
-        // Update real-time chart every 2 seconds
         if (!userActivityInterval) {
           userActivityInterval = window.setInterval(updateUserActivityChart, 2000);
         }
-      }
-      
-      // Generate initial data
-      generateBusinessData();
-      
-      // Set up interval to update data
-      if (!businessUpdateInterval) {
-        businessUpdateInterval = window.setInterval(generateBusinessData, 30000);
       }
     };
     
@@ -920,7 +761,7 @@ export default defineComponent({
             datasets: [
               {
                 label: 'CPU (%)',
-                data: hours.map(() => Math.floor(Math.random() * 30) + 40),
+                data: [45, 52, 49, 60, 55, 58, 62, 65, 68, 62, 56, 52, 48, 50, 54, 59, 63, 67, 70, 65, 60, 55, 50, 47],
                 borderColor: '#4a9ff5',
                 backgroundColor: 'rgba(74, 159, 245, 0.1)',
                 tension: 0.4,
@@ -928,7 +769,7 @@ export default defineComponent({
               },
               {
                 label: 'Memoria (%)',
-                data: hours.map(() => Math.floor(Math.random() * 30) + 50),
+                data: [60, 65, 68, 72, 75, 78, 80, 82, 79, 76, 72, 70, 68, 65, 68, 72, 75, 78, 80, 77, 74, 70, 67, 65],
                 borderColor: '#ff1a1a',
                 backgroundColor: 'rgba(255, 26, 26, 0.1)',
                 tension: 0.4,
@@ -943,27 +784,27 @@ export default defineComponent({
               legend: {
                 position: 'top',
                 labels: {
-                  color: '#333333' // Color más oscuro para las etiquetas
+                  color: '#333333'
                 }
               }
             },
             scales: {
               x: {
                 ticks: {
-                  color: '#333333' // Color más oscuro para las etiquetas del eje X
+                  color: '#333333'
                 },
                 grid: {
-                  color: '#dddddd' // Color más oscuro para las líneas de la cuadrícula
+                  color: '#dddddd'
                 }
               },
               y: {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                  color: '#333333' // Color más oscuro para las etiquetas del eje Y
+                  color: '#333333'
                 },
                 grid: {
-                  color: '#dddddd' // Color más oscuro para las líneas de la cuadrícula
+                  color: '#dddddd'
                 }
               }
             }
@@ -984,7 +825,7 @@ export default defineComponent({
             toolbar: {
               show: false
             },
-            foreColor: '#333333' // Color más oscuro para el texto
+            foreColor: '#333333'
           },
           plotOptions: {
             bar: {
@@ -1012,91 +853,103 @@ export default defineComponent({
             categories: ['/api/users', '/api/products', '/api/search', '/api/messages', '/api/categories', '/api/transactions', '/api/auth'],
             labels: {
               style: {
-                colors: '#333333' // Color más oscuro para las etiquetas del eje X
+                colors: '#333333'
               }
             }
           },
           yaxis: {
             labels: {
               style: {
-                colors: '#333333' // Color más oscuro para las etiquetas del eje Y
+                colors: '#333333'
               }
             }
           },
           grid: {
-            borderColor: '#dddddd' // Color más oscuro para los bordes de la cuadrícula
+            borderColor: '#dddddd'
           }
         });
         
         apiResponseChartInstance.render();
       }
       
-      // 3. ECharts - Donut Chart (Error Types)
+      // 3. ECharts - Treemap (Error Types)
       if (errorTypesChart.value && !errorTypesChartInstance) {
-        // Asegurarse de que el contenedor tenga dimensiones
         errorTypesChart.value.style.width = '100%';
         errorTypesChart.value.style.height = '100%';
         
-        // Inicializar ECharts después de asegurar que el DOM está listo
         nextTick(() => {
           errorTypesChartInstance = echarts.init(errorTypesChart.value);
           
+          const errorData = [
+            { name: 'Red', value: 35 },
+            { name: 'Autenticación', value: 25 },
+            { name: 'Validación', value: 20 },
+            { name: 'Base de Datos', value: 15 },
+            { name: 'Servidor', value: 5 }
+          ];
+          
+          const totalErrors = errorData.reduce((sum, item) => sum + item.value, 0);
+          
           errorTypesChartInstance.setOption({
             tooltip: {
-              trigger: 'item',
-              formatter: '{a} <br/>{b}: {c} ({d}%)',
-              textStyle: {
-                color: '#333333' // Color más oscuro para el texto del tooltip
+              formatter: function(info: any) {
+                const value = info.value;
+                const percentage = ((value / totalErrors) * 100).toFixed(1);
+                return `<div style="font-weight:bold;margin-bottom:5px;">${info.name}</div>` +
+                       `<div>Errores: ${value}</div>` +
+                       `<div>Porcentaje: ${percentage}%</div>`;
               }
             },
-            legend: {
-              orient: 'vertical',
-              right: 10,
-              top: 'center',
-              data: ['Red', 'Autenticación', 'Validación', 'Base de Datos', 'Servidor'],
-              textStyle: {
-                color: '#333333' // Color más oscuro para el texto de la leyenda
-              }
-            },
-            color: ['#4a9ff5', '#5b6bf9', '#4ad9f5', '#b14cfa', '#ff1a1a'],
-            series: [
-              {
-                name: 'Tipos de Error',
-                type: 'pie',
-                radius: ['50%', '70%'],
-                center: ['40%', '50%'], // Centrado para dejar espacio a la leyenda
-                avoidLabelOverlap: false,
-                itemStyle: {
-                  borderRadius: 10,
-                  borderColor: '#fff',
-                  borderWidth: 2
-                },
-                label: {
-                  show: false
-                },
-                emphasis: {
+            series: [{
+              type: 'treemap',
+              data: errorData.map(item => {
+                const percentage = ((item.value / totalErrors) * 100).toFixed(1);
+                return {
+                  name: item.name,
+                  value: item.value,
                   label: {
-                    show: true,
-                    fontSize: '18',
-                    fontWeight: 'bold',
-                    color: '#333333' // Color más oscuro para las etiquetas enfatizadas
+                    formatter: `{b}\n{c} (${percentage}%)`,
+                    fontSize: 14
                   }
-                },
-                labelLine: {
-                  show: false
-                },
-                data: [
-                  { value: 35, name: 'Red' },
-                  { value: 25, name: 'Autenticación' },
-                  { value: 20, name: 'Validación' },
-                  { value: 15, name: 'Base de Datos' },
-                  { value: 5, name: 'Servidor' }
-                ]
+                };
+              }),
+              breadcrumb: { show: false },
+              itemStyle: {
+                borderColor: '#fff',
+                borderWidth: 1,
+                gapWidth: 1
+              },
+              label: {
+                show: true,
+                formatter: '{b}\n{c} ({d}%)',
+                position: 'inside',
+                fontSize: 14,
+                color: '#fff'
+              },
+              upperLabel: {
+                show: false
+              },
+              levels: [
+                {
+                  itemStyle: {
+                    borderColor: '#fff',
+                    borderWidth: 2,
+                    gapWidth: 2
+                  }
+                }
+              ],
+              colorRange: {
+                color: ['#4a9ff5', '#5b6bf9', '#4ad9f5', '#b14cfa', '#ff1a1a']
+              },
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
               }
-            ]
+            }]
           });
           
-          // Asegurarse de que el gráfico se redimensione cuando cambie el tamaño de la ventana
           window.addEventListener('resize', () => {
             errorTypesChartInstance?.resize();
           });
@@ -1105,7 +958,6 @@ export default defineComponent({
       
       // 4. Custom Chart - Gauge (Memory Usage)
       if (memoryUsageChart.value) {
-        // Create gauge elements
         const gaugeContainer = document.createElement('div');
         gaugeContainer.className = 'gauge';
         
@@ -1118,20 +970,13 @@ export default defineComponent({
         const gaugeText = document.createElement('div');
         gaugeText.className = 'gauge-text';
         
-        // Append elements
         gaugeValue.appendChild(gaugeFill);
         gaugeContainer.appendChild(gaugeValue);
         gaugeContainer.appendChild(gaugeText);
         memoryUsageChart.value.innerHTML = '';
         memoryUsageChart.value.appendChild(gaugeContainer);
         
-        // Update gauge initially
         updateMemoryGauge();
-        
-        // Set up interval to update gauge
-        if (!memoryGaugeInterval) {
-          memoryGaugeInterval = window.setInterval(updateMemoryGauge, 2000);
-        }
       }
       
       // 5. Real-time Chart - Radar Chart (DB Performance)
@@ -1170,17 +1015,17 @@ export default defineComponent({
             scales: {
               r: {
                 angleLines: {
-                  color: '#dddddd' // Color más oscuro para las líneas angulares
+                  color: '#dddddd'
                 },
                 grid: {
-                  color: '#dddddd' // Color más oscuro para las líneas de la cuadrícula
+                  color: '#dddddd'
                 },
                 pointLabels: {
-                  color: '#333333' // Color más oscuro para las etiquetas de los puntos
+                  color: '#333333'
                 },
                 ticks: {
-                  color: '#333333', // Color más oscuro para las marcas
-                  backdropColor: 'rgba(255, 255, 255, 0.75)' // Fondo más opaco para las marcas
+                  color: '#333333',
+                  backdropColor: 'rgba(255, 255, 255, 0.75)'
                 },
                 suggestedMin: 0,
                 suggestedMax: 100
@@ -1189,50 +1034,37 @@ export default defineComponent({
             plugins: {
               legend: {
                 labels: {
-                  color: '#333333' // Color más oscuro para las etiquetas de la leyenda
+                  color: '#333333'
                 }
               }
             }
           }
         });
         
-        // Update real-time chart every 3 seconds
         if (!dbPerformanceInterval) {
           dbPerformanceInterval = window.setInterval(updateDbPerformanceChart, 3000);
         }
-      }
-      
-      // Generate initial data
-      generateTechnicalData();
-      
-      // Set up interval to update data
-      if (!technicalUpdateInterval) {
-        technicalUpdateInterval = window.setInterval(generateTechnicalData, 30000);
       }
     };
     
     // Watch for segment changes
     watch(activeSegment, (newSegment) => {
       if (newSegment === 'business') {
-        // Reinicializar gráficos de negocio si es necesario
         nextTick(() => {
           if (!salesChartInstance && salesChart.value) {
             initBusinessCharts();
           }
           
-          // Asegurarse de que los gráficos de ECharts se redimensionen
           if (userDistributionChartInstance) {
             userDistributionChartInstance.resize();
           }
         });
       } else if (newSegment === 'technical') {
-        // Reinicializar gráficos técnicos si es necesario
         nextTick(() => {
           if (!serverLoadChartInstance && serverLoadChart.value) {
             initTechnicalCharts();
           }
           
-          // Asegurarse de que los gráficos de ECharts se redimensionen
           if (errorTypesChartInstance) {
             errorTypesChartInstance.resize();
           }
@@ -1242,17 +1074,14 @@ export default defineComponent({
     
     // Initialize both dashboards on mount
     onMounted(() => {
-      // Initialize business charts first
       nextTick(() => {
         initBusinessCharts();
         
-        // Initialize technical charts after a short delay
         setTimeout(() => {
           initTechnicalCharts();
         }, 300);
       });
       
-      // Handle window resize for charts
       window.addEventListener('resize', () => {
         if (userDistributionChartInstance) {
           userDistributionChartInstance.resize();
@@ -1274,24 +1103,13 @@ export default defineComponent({
     
     // Clean up on unmount
     onUnmounted(() => {
-      // Clear update intervals
-      if (businessUpdateInterval) {
-        clearInterval(businessUpdateInterval);
-      }
-      if (technicalUpdateInterval) {
-        clearInterval(technicalUpdateInterval);
-      }
       if (userActivityInterval) {
         clearInterval(userActivityInterval);
       }
       if (dbPerformanceInterval) {
         clearInterval(dbPerformanceInterval);
       }
-      if (memoryGaugeInterval) {
-        clearInterval(memoryGaugeInterval);
-      }
       
-      // Destroy chart instances - Business
       salesChartInstance?.destroy();
       if (annualGrowthChartInstance) {
         annualGrowthChartInstance.destroy();
@@ -1304,7 +1122,6 @@ export default defineComponent({
       }
       userActivityChartInstance?.destroy();
       
-      // Destroy chart instances - Technical
       serverLoadChartInstance?.destroy();
       if (apiResponseChartInstance) {
         apiResponseChartInstance.destroy();
@@ -1317,21 +1134,18 @@ export default defineComponent({
     
     return {
       activeSegment,
-      // Business chart refs
       salesChart,
       annualGrowthChart,
       userDistributionChart,
       salesGoalsChart,
       userActivityChart,
       businessStats,
-      // Technical chart refs
       serverLoadChart,
       apiResponseChart,
       errorTypesChart,
       memoryUsageChart,
       dbPerformanceChart,
       technicalStats,
-      // Icons
       calendarOutline,
       downloadOutline,
       businessOutline,
@@ -1416,12 +1230,12 @@ ion-content {
 .kpi-value {
   font-size: 20px;
   font-weight: 700;
-  color: #333333; /* Color más oscuro para los valores */
+  color: #333333;
 }
 
 .kpi-label {
   font-size: 12px;
-  color: #555555; /* Color más oscuro para las etiquetas */
+  color: #555555;
   margin: 4px 0;
 }
 
@@ -1463,6 +1277,11 @@ ion-content {
   height: 100%;
 }
 
+/* Clase especial para gráficos que ocupan 2 filas */
+.chart-card-tall {
+  grid-row: span 2; /* Esto hace que el elemento ocupe 2 filas */
+}
+
 .chart-header {
   display: flex;
   justify-content: space-between;
@@ -1473,7 +1292,7 @@ ion-content {
 .chart-header h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #333333; /* Color más oscuro para los títulos */
+  color: #333333;
   margin: 0;
 }
 
@@ -1554,6 +1373,10 @@ ion-content {
   .charts-grid {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(5, 1fr);
+  }
+  
+  .chart-card-tall {
+    grid-row: span 1; /* En móvil, vuelve a ocupar solo 1 fila */
   }
 }
 
